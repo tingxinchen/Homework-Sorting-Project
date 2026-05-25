@@ -64,16 +64,16 @@ int main()
         for (int k = 1; k <= size[i]; k++)
             d[k] = k;
 
-        cout << "Permute �e�G";
+        cout << "Permute «e¡G";
         printArray(d, size[i]);
 
         Permute(d, size[i]);  
 
-        cout << "Permute ��G";
+        cout << "Permute «á¡G";
         printArray(d, size[i]);
 
         QuickSort(d, 1, size[i]);
-        cout << "�Ƨǫ�T�{�G";
+        cout << "±Æ§Ç«á½T»{¡G";
         printArray(d, size[i]);
         delete[] d;
 
