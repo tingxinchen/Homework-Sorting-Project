@@ -346,6 +346,13 @@ int main()
 
 ### 結論
 作業做了Insertion Sort、Quick Sort、Merge Sort、Heap Sort還有Composite Sorting，並在不同資料n下，對Worst Case和Average Cas進行了測試還有畫圖。
+## 分工
+由兩人共同完成，如下表所示：
+| 負責人 |  負責項目(Core Contributions) | 實作內容|
+| :---: | :--- | :--- | :---: |
+| **金宗翰** | **演算法實作與基礎架構** | 1. 實作基礎排序演算法：`Insertion Sort` 與 `Merge Sort`（非遞迴反向版本）。<br>2. 設計與實作 `Composite Sorting` 混合排序法（小資料切換 `Insertion Sort`，大資料切換 `Heap Sort`）。<br>3. 撰寫主要計時與測試框架（包含亂數產生器與記憶體配置優化）。 |
+| **陳廷鑫** | **演算法優化與效能分析** | 1. 實作高效排序演算法：`Quick Sort`（包含 `Median-of-three` 三數取中法優化）與 `Heap Sort`。<br>2. 負責進行專案第五題（Exercise 5）實驗：針對不同資料量 $n$ 的「隨機排列（Random Permutations）」進行平均執行時間測試。<br>3. 收集與整理 Worst-case / Average-case 的測試數據，並撰寫實驗心得與討論報告。 |
+
 
 
 ## 申論及開發報告
