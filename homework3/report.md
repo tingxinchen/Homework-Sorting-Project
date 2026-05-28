@@ -35,6 +35,9 @@
 4. Heap Sort：
    - 測試 n = 500, 1000, 2000, 3000, 4000, 5000。
    - 每個 n 產生 10 組 random permutation，分別計時 HeapSort，取最大時間作為 worst-case 的近似值。
+<img width="1047" height="125" alt="image" src="https://github.com/user-attachments/assets/48100456-0b7f-4226-ab5c-b3496dca14d8" />
+
+<img width="998" height="655" alt="image" src="https://github.com/user-attachments/assets/9541b7de-08c4-4e38-9b69-6010bf3a48a5" />
 
 ### 結論
 
