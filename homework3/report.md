@@ -344,9 +344,18 @@ int main()
 <img width="977" height="655" alt="image" src="https://github.com/user-attachments/assets/b05d9293-0b61-499f-b446-e940fe9b9400" />
 
 
-### 結論
+## 結論
 作業做了Insertion Sort、Quick Sort、Merge Sort、Heap Sort還有Composite Sorting，並在不同資料n下，對Worst Case和Average Cas進行了測試還有畫圖。
+### 分工
 
+| 負責人 | 實作部分 |報告部分|
+|--------|----------|---------|
+| 陳廷鑫 | Quick Sort、Heap Sort |說明、時間複雜度|
+| 金宗翰 | Insertion Sort、Merge Sort |圖表製作|
+
+### 一起做的
+
+- **程式碼整合：** Composite Sorting
 
 
 
