@@ -200,7 +200,6 @@ int main()
         delete[] arr;
     }
 
-    // ==================== 直接 5 個 cout 輸出 ====================
     cout << "Merge { N=500:" << res_merge[0] << ", N=1000:" << res_merge[1] << ", N=2000:" << res_merge[2] << ", N=3000:" << res_merge[3] << ", N=4000:" << res_merge[4] << ", N=5000:" << res_merge[5] << " }\n";
 
     cout << "Quick { N=500:" << res_quick[0] << ", N=1000:" << res_quick[1] << ", N=2000:" << res_quick[2] << ", N=3000:" << res_quick[3] << ", N=4000:" << res_quick[4] << ", N=5000:" << res_quick[5] << " }\n";
