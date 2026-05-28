@@ -2,6 +2,7 @@
 #include <algorithm>
 #include <climits>
 #include <chrono>
+#include<vector>
 using namespace std;
 
 void Adjust(int* a, const int root, const int n)
@@ -46,19 +47,16 @@ void Permute(int* a, int n)
     }
 }
 
-int main()
-{
+int main() {
     srand(42);
     int size[6] = { 500, 1000, 2000, 3000, 4000, 5000 };
 
-    for (int i = 0; i < 6; i++)
-    {
+    for (int i = 0; i < 6; i++) {
         int n = size[i];
         double maxTime = 0;
+        vector<int> worst_perm(n + 2); // 最久的組
 
-        // worst-case
-        for (int t = 0; t < 10; t++)
-        {
+        for (int t = 0; t < 10; t++) {
             int* h = new int[n + 2];
             h[n + 1] = INT_MAX;
             for (int k = 1; k <= n; k++) h[k] = k;
@@ -69,13 +67,21 @@ int main()
             auto end = chrono::high_resolution_clock::now();
 
             double t1 = chrono::duration<double, milli>(end - start).count();
-            if (t1 > maxTime) maxTime = t1;
-
+            if (t1 > maxTime) {
+                maxTime = t1;
+            
+                for (int k = 1; k <= n; k++) worst_perm[k] = h[k];
+            }
             delete[] h;
         }
-
-        cout << "n=" << n << "  HeapSort worst-case: " << maxTime << " ms" << endl;
+        // 最慢的
+        cout << "n=" << n << " HeapSort worst-case: " << maxTime << " ms\n";
+        cout << "最久所用 permutation（index 1~" << n << "）：\n";
+        int preview = 10;
+        for (int k = 1; k <= min(preview, n); k++) cout << worst_perm[k] << " ";
+        if (n > 2 * preview) cout << "... ";
+        for (int k = max(preview + 1, n - preview + 1); k <= n; k++) cout << worst_perm[k] << " ";
+        cout << endl;
     }
-
     return 0;
 }
