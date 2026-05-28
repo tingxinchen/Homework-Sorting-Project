@@ -335,7 +335,7 @@ int main()
 ### 測試案例
 1. Insertion Sort：使用小陣列 {5,4,3,2,1}，排序後輸出確認為遞增。
 2. Quick Sort：先建立 1..n 的陣列，Permute 後再 QuickSort，最後輸出確認結果已排序。
-3. Merge Sort：先產生 worst-case 資料（n=16），印出資料後進行 iterativeMergeSort，再印出確認已排序。
+3. Merge Sort：先產生 worst-case 資料，印出資料後進行 iterativeMergeSort，再印出確認已排序。
 4. Heap Sort：
    - 測試 n = 500, 1000, 2000, 3000, 4000, 5000。
    - 每個 n 產生 10 組 random permutation，分別計時 HeapSort，取最大時間作為 worst-case 的近似值。
@@ -351,6 +351,7 @@ int main()
 
 <img width="984" height="653" alt="image" src="https://github.com/user-attachments/assets/7d037245-fd3b-4414-b2fb-1d982c87e165" />
 
+紀錄不同排序的平均時間
 
 <img width="590" height="153" alt="image" src="https://github.com/user-attachments/assets/b483d1f0-514f-43e4-8496-d7709ff3440c" />
 
