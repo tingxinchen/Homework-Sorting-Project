@@ -1,5 +1,8 @@
 #include <iostream>
 #include <algorithm> 
+#include <chrono>
+#include <climits>
+#include <vector>
 using namespace std;
 
 
@@ -12,7 +15,7 @@ T Median(T* a, int left, int right)
     if (a[right] < a[left]) swap(a[left], a[right]);
     if (a[right] < a[mid]) swap(a[mid], a[right]);
 
-   
+
     swap(a[left], a[mid]);
     return a[left];
 }
@@ -28,14 +31,14 @@ void QuickSort(T* a, int left, int right)
             j = right + 1;
 
         do {
-            do i++; while (a[i] < pivot); 
-            do j--; while (a[j] > pivot); 
-            if (i < j) swap(a[i], a[j]);   
+            do i++; while (a[i] < pivot);
+            do j--; while (a[j] > pivot);
+            if (i < j) swap(a[i], a[j]);
         } while (i < j);
 
-        swap(a[left], a[j]);  
+        swap(a[left], a[j]);
 
-        QuickSort(a, left, j - 1);   
+        QuickSort(a, left, j - 1);
         QuickSort(a, j + 1, right);
     }
 }
@@ -57,25 +60,61 @@ void Permute(int* a, int n)
 int main()
 {
     srand(42);
-    int size[6] = { 500, 1000, 2000, 3000, 4000, 5000 };
-    for (int i = 0; i < 6; i++) {
-        int* d = new int[size[i] + 1]; 
+    int sizes[6] = { 500, 1000, 2000, 3000, 4000, 5000 };
 
-        for (int k = 1; k <= size[i]; k++)
-            d[k] = k;
+    const int RUNS = 100;    
+    const int TRIALS = 10;  
 
-        cout << "Permute «e¡G";
-        printArray(d, size[i]);
+    for (int idx = 0; idx < 6; idx++)
+    {
+        int n = sizes[idx];
 
-        Permute(d, size[i]);  
+        //average-case
+        long long sum_us = 0;
+        for (int t = 0; t < RUNS; t++)
+        {
+            int* d = new int[n + 2];
+            d[n + 1] = INT_MAX;        
+            for (int k = 1; k <= n; k++) d[k] = k;
+            Permute(d, n);
 
-        cout << "Permute «á¡G";
-        printArray(d, size[i]);
+            auto start = chrono::high_resolution_clock::now();
+            QuickSort(d, 1, n);
+            auto end = chrono::high_resolution_clock::now();
 
-        QuickSort(d, 1, size[i]);
-        cout << "±Æ§Ç«á½T»{¡G";
-        printArray(d, size[i]);
-        delete[] d;
+            sum_us += (long long)chrono::duration<double, micro>(end - start).count();
+            delete[] d;
+        }
+        cout << "n=" << n << " QuickSort average-case: " << (sum_us / RUNS) << " us\n";
 
+        //worst-case
+        double max_us = 0;
+        vector<int> worst_perm(n + 2);
+
+        for (int t = 0; t < TRIALS; t++)
+        {
+            int* d = new int[n + 2];
+            d[n + 1] = INT_MAX;
+            for (int k = 1; k <= n; k++) d[k] = k;
+            Permute(d, n);
+
+            auto start = chrono::high_resolution_clock::now();
+            QuickSort(d, 1, n);
+            auto end = chrono::high_resolution_clock::now();
+
+            double us = chrono::duration<double, micro>(end - start).count();
+            if (us > max_us) {
+                max_us = us;
+                for (int k = 1; k <= n; k++) worst_perm[k] = d[k];
+            }
+            delete[] d;
+        }
+
+        cout << "n=" << n << " QuickSort worst-case: " << max_us << " us\n";
+
+        int preview = 10;
+        cout << "\n";
     }
+
+    return 0;
 }
