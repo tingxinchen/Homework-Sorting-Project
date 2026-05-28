@@ -136,6 +136,7 @@ void Permute(T* a, int n)
 
 int main()
 {
+    srand(42);
     vector<int> sizes = { 500, 1000, 2000, 3000, 4000, 5000 };
     const int RUNS = 100;
 
@@ -143,7 +144,6 @@ int main()
 
     for (int n : sizes) {
         vector<vector<int>> test_batches(RUNS, vector<int>(n + 2));
-        srand(42);
         for (int t = 0; t < RUNS; t++) {
             for (int k = 1; k <= n; k++) test_batches[t][k] = k;
             Permute(test_batches[t].data(), n);
