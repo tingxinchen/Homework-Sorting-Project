@@ -1,16 +1,16 @@
 
-# 第九組:41343119、41343128
+# 第九組
 # 41343128 陳廷鑫 、41343119 金宗翰
 ## 解題說明
 
 ### 解題策略和步驟
-1. 依作業要求先分別完成各種排序法的基本版本，並先用小資料確認結果正確。
-2. Quick Sort 的 pivot 依規定使用 median-of-three（取 left / mid / right 三者的中位數）來降低遇到接近排序好資料時的退化機率。
-3. Merge Sort 依規定使用 iterative 版本（由小區段開始兩兩合併，區段大小每輪倍增）。
+1. 作業要求先分別完成各種排序法的基本版本，用小資料確認結果正確
+2. Quick Sort 的 pivot 規定使用 median-of-three，取 left 、mid 、right 三者的中位數來降低遇到接近排序好資料時，會變慢的問題
+3. Merge Sort 規定使用迭代，每合併完一輪，合併的區間寬度就乘以2，直到整條陣列都合併完。    
 4. worst-case 測資部分：
    - Insertion Sort：使用反向序列 (n, n-1, ..., 1)。
    - Merge Sort：用 generateWorstCase() 產生讓 merge 過程比較吃力的排列。
-   - Heap Sort：依課本/作業建議，使用 random permutation 產生多組測資，實測多次後取最大值來近似 worst-case。
+   - Heap Sort：課本使用 random permutation 產生多組測資，測很多次後取最大值來近似 worst-case。
 5. average-case 測資部分：使用 random permutation（隨機排列）多次測試，再取平均。
 
 ## 程式實作
@@ -37,8 +37,7 @@
    - 每個 n 產生 10 組 random permutation，分別計時 HeapSort，取最大時間作為 worst-case 的近似值。
 
 ### 結論
-目前已完成 Insertion / Quick(median-of-three) / Merge(iterative) / Heap 的基本實作，並都有用簡單方式確認排序正確。
-接下來等整合版完成後，會把四種排序統一放到同一個測試框架下，用同一份測資去量測並整理成表格/圖表（worst-case 與 average-case 都要做），最後再加入 Composite Sort 進行比較。
+
 
 
 ## 申論及開發報告
