@@ -346,7 +346,7 @@ int main()
 
 
 ### 結論
-
+作業做了Insertion Sort、Quick Sort、Merge Sort、Heap Sort還有Composite Sorting，並在不同資料$n$下，對Worst Case和Average Cas進行了測試還有畫圖。
 
 
 ## 申論及開發報告
