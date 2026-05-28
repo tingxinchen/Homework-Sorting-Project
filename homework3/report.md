@@ -7,11 +7,11 @@
 1. 作業要求先分別完成各種排序法的基本版本，用小資料確認結果正確
 2. Quick Sort 的 pivot 規定使用 median-of-three，取 left 、mid 、right 三者的中位數來降低遇到接近排序好資料時，會變慢的問題
 3. Merge Sort 規定使用迭代，每合併完一輪，合併的區間寬度就乘以2，直到整條陣列都合併完。    
-4. worst-case 測資部分：
+4. worst-case 測資的部分：
    - Insertion Sort：使用反向序列 (n, n-1, ..., 1)。
    - Merge Sort：用 generateWorstCase() 產生讓 merge 過程比較吃力的排列。
    - Heap Sort：課本使用 random permutation 產生多組測資，測很多次後取最大值來近似 worst-case。
-5. average-case 測資部分：使用 random permutation（隨機排列）多次測試，再取平均。
+5. average-case 測資的部分：使用 random permutation（隨機排列）多次測試，再取平均。
 
 ## 程式實作
 以下是程式碼：
