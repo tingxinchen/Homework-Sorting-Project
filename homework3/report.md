@@ -339,6 +339,19 @@ int main()
 4. Heap Sort：
    - 測試 n = 500, 1000, 2000, 3000, 4000, 5000。
    - 每個 n 產生 10 組 random permutation，分別計時 HeapSort，取最大時間作為 worst-case 的近似值。
+
+<img width="600" height="77" alt="image" src="https://github.com/user-attachments/assets/2abee0df-0ae9-4d1a-8147-d2fcf9bbb291" />
+
+<img width="563" height="469" alt="image" src="https://github.com/user-attachments/assets/77f983c7-8b2e-42bb-84a0-6f5b2094f97d" />
+
+<img width="596" height="79" alt="image" src="https://github.com/user-attachments/assets/af6c1d92-b697-4ae9-8cb5-79a70bfb6c59" />
+
+<img width="817" height="344" alt="image" src="https://github.com/user-attachments/assets/a11c6758-231c-468c-94db-1dfb465acfe9" />
+
+
+<img width="984" height="653" alt="image" src="https://github.com/user-attachments/assets/7d037245-fd3b-4414-b2fb-1d982c87e165" />
+
+
 <img width="590" height="153" alt="image" src="https://github.com/user-attachments/assets/b483d1f0-514f-43e4-8496-d7709ff3440c" />
 
 <img width="977" height="655" alt="image" src="https://github.com/user-attachments/assets/b05d9293-0b61-499f-b446-e940fe9b9400" />
