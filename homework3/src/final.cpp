@@ -7,7 +7,7 @@
 
 using namespace std;
 
-// ==================== 1. Merge Sort (1-indexed) ====================
+//Merge Sort
 void merge(int arr[], int left, int mid, int right)
 {
     int n1 = mid - left + 1;
@@ -42,7 +42,7 @@ void iterativeMergeSort(int arr[], int n)
     }
 }
 
-// ==================== 2. Quick Sort (1-indexed) ====================
+//Quick Sort
 int Median(int* a, int left, int right)
 {
     int mid = (left + right) / 2;
@@ -71,7 +71,7 @@ void QuickSort(int* a, int left, int right)
     }
 }
 
-// ==================== 3. Heap Sort (1-indexed) ====================
+//Heap Sort
 void Adjust(int* a, const int root, const int n)
 {
     int j;
@@ -93,7 +93,7 @@ void HeapSort(int* a, const int n)
     }
 }
 
-// ==================== 4. Insertion Sort (1-indexed) ====================
+//Insertion Sort
 void insertionSortRange(int arr[], int left, int right)
 {
     for (int i = left + 1; i <= right; i++) {
@@ -112,7 +112,7 @@ void insertionSort(int arr[], int n)
     insertionSortRange(arr, 1, n);
 }
 
-// ==================== 5. 複合排序 (Composite Sort) ====================
+//Composite Sort
 void compositeSort(int arr[], int left, int right)
 {
     int threshold = 20;
@@ -124,7 +124,7 @@ void compositeSort(int arr[], int left, int right)
     }
 }
 
-// 隨機排列洗牌函式
+//隨機數值
 template <class T>
 void Permute(T* a, int n)
 {
@@ -137,7 +137,7 @@ void Permute(T* a, int n)
 int main()
 {
     vector<int> sizes = { 500, 1000, 2000, 3000, 4000, 5000 };
-    const int RUNS = 100; // 簡短變數名稱
+    const int RUNS = 100;
 
     vector<long long> res_merge, res_quick, res_heap, res_insertion, res_composite;
 
@@ -152,7 +152,7 @@ int main()
         int* arr = new int[n + 2];
         arr[n + 1] = INT_MAX;
 
-        // ---- A. Merge Sort 測試 ----
+        //Merge Sort測試
         auto start = chrono::high_resolution_clock::now();
         for (int t = 0; t < RUNS; t++) {
             for (int i = 1; i <= n; i++) arr[i] = test_batches[t][i];
@@ -161,7 +161,7 @@ int main()
         double t_merge = chrono::duration<double, micro>(chrono::high_resolution_clock::now() - start).count();
         res_merge.push_back((long long)(t_merge / RUNS));
 
-        // ---- B. Quick Sort 測試 ----
+        //Quick Sort測試
         start = chrono::high_resolution_clock::now();
         for (int t = 0; t < RUNS; t++) {
             for (int i = 1; i <= n; i++) arr[i] = test_batches[t][i];
@@ -170,7 +170,7 @@ int main()
         double t_quick = chrono::duration<double, micro>(chrono::high_resolution_clock::now() - start).count();
         res_quick.push_back((long long)(t_quick / RUNS));
 
-        // ---- C. Heap Sort 測試 ----
+        //Heap Sort測試
         start = chrono::high_resolution_clock::now();
         for (int t = 0; t < RUNS; t++) {
             for (int i = 1; i <= n; i++) arr[i] = test_batches[t][i];
@@ -179,7 +179,7 @@ int main()
         double t_heap = chrono::duration<double, micro>(chrono::high_resolution_clock::now() - start).count();
         res_heap.push_back((long long)(t_heap / RUNS));
 
-        // ---- D. Insertion Sort 測試 ----
+        //Insertion Sort測試
         start = chrono::high_resolution_clock::now();
         for (int t = 0; t < RUNS; t++) {
             for (int i = 1; i <= n; i++) arr[i] = test_batches[t][i];
@@ -188,7 +188,7 @@ int main()
         double t_insertion = chrono::duration<double, micro>(chrono::high_resolution_clock::now() - start).count();
         res_insertion.push_back((long long)(t_insertion / RUNS));
 
-        // ---- E. Composite Sort 測試 ----
+        //Composite Sort測試
         start = chrono::high_resolution_clock::now();
         for (int t = 0; t < RUNS; t++) {
             for (int i = 1; i <= n; i++) arr[i] = test_batches[t][i];
