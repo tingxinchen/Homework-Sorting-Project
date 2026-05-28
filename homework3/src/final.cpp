@@ -4,7 +4,8 @@
 #include <chrono>
 #include <climits>
 #include <cstdlib>
-
+#include <Windows.h>
+#include <Psapi.h>
 
 using namespace std;
 
@@ -137,13 +138,27 @@ static void Permute(T* a, int n)
     }
 }
 
+
+
+//記憶體
+static size_t getWorkingSetKB() {
+    PROCESS_MEMORY_COUNTERS memInfo;
+    GetProcessMemoryInfo(GetCurrentProcess(), &memInfo, sizeof(memInfo));
+    return (size_t)(memInfo.WorkingSetSize / 1024);
+}
+
+static size_t getPeakWorkingSetKB() {
+    PROCESS_MEMORY_COUNTERS memInfo;
+    GetProcessMemoryInfo(GetCurrentProcess(), &memInfo, sizeof(memInfo));
+    return (size_t)(memInfo.PeakWorkingSetSize / 1024);
+}
 int main()
 {
     srand(42);
 
     vector<int> sizes = { 500, 1000, 2000, 3000, 4000, 5000 };
     const int RUNS = 100;
-
+    vector<long long> mem_merge, mem_quick, mem_heap, mem_insertion, mem_composite; //記憶體
     vector<long long> res_merge, res_quick, res_heap, res_insertion, res_composite;
 
     for (int n : sizes) {
@@ -157,89 +172,133 @@ int main()
         int* arr = new int[n + 2];
         arr[n + 1] = INT_MAX; // QuickSort 的哨兵
 
-        // Merge Sort
-        auto start = chrono::high_resolution_clock::now();
-        for (int t = 0; t < RUNS; t++) {
-            for (int i = 1; i <= n; i++) arr[i] = test_batches[t][i];
-            iterativeMergeSort(arr, n);
-        }
-        double t_merge = chrono::duration<double, micro>(chrono::high_resolution_clock::now() - start).count();
-        res_merge.push_back((long long)(t_merge / RUNS));
+        // ---------------- Merge Sort ----------------
+        {
+            size_t mem_before = getWorkingSetKB();
 
-        // Quick Sort
-        start = chrono::high_resolution_clock::now();
-        for (int t = 0; t < RUNS; t++) {
-            for (int i = 1; i <= n; i++) arr[i] = test_batches[t][i];
-            QuickSort(arr, 1, n);
-        }
-        double t_quick = chrono::duration<double, micro>(chrono::high_resolution_clock::now() - start).count();
-        res_quick.push_back((long long)(t_quick / RUNS));
+            auto start = chrono::high_resolution_clock::now();
+            for (int t = 0; t < RUNS; t++) {
+                for (int i = 1; i <= n; i++) arr[i] = test_batches[t][i];
+                iterativeMergeSort(arr, n);
+            }
+            double t_merge = chrono::duration<double, micro>(chrono::high_resolution_clock::now() - start).count();
 
-        // Heap Sort
-        start = chrono::high_resolution_clock::now();
-        for (int t = 0; t < RUNS; t++) {
-            for (int i = 1; i <= n; i++) arr[i] = test_batches[t][i];
-            HeapSort(arr, n);
-        }
-        double t_heap = chrono::duration<double, micro>(chrono::high_resolution_clock::now() - start).count();
-        res_heap.push_back((long long)(t_heap / RUNS));
+            size_t mem_after = getWorkingSetKB();
 
-        // Insertion Sort
-        start = chrono::high_resolution_clock::now();
-        for (int t = 0; t < RUNS; t++) {
-            for (int i = 1; i <= n; i++) arr[i] = test_batches[t][i];
-            insertionSort(arr, n);
+            res_merge.push_back((long long)(t_merge / RUNS));
+            mem_merge.push_back((long long)((long long)mem_after - (long long)mem_before));
         }
-        double t_insertion = chrono::duration<double, micro>(chrono::high_resolution_clock::now() - start).count();
-        res_insertion.push_back((long long)(t_insertion / RUNS));
 
-        // Composite Sort
-        start = chrono::high_resolution_clock::now();
-        for (int t = 0; t < RUNS; t++) {
-            for (int i = 1; i <= n; i++) arr[i] = test_batches[t][i];
-            compositeSort(arr, 1, n);
+        // ---------------- Quick Sort ----------------
+        {
+            size_t mem_before = getWorkingSetKB();
+
+            auto start = chrono::high_resolution_clock::now();
+            for (int t = 0; t < RUNS; t++) {
+                for (int i = 1; i <= n; i++) arr[i] = test_batches[t][i];
+                QuickSort(arr, 1, n);
+            }
+            double t_quick = chrono::duration<double, micro>(chrono::high_resolution_clock::now() - start).count();
+
+            size_t mem_after = getWorkingSetKB();
+
+            res_quick.push_back((long long)(t_quick / RUNS));
+            mem_quick.push_back((long long)((long long)mem_after - (long long)mem_before));
         }
-        double t_composite = chrono::duration<double, micro>(chrono::high_resolution_clock::now() - start).count();
-        res_composite.push_back((long long)(t_composite / RUNS));
+
+        // ---------------- Heap Sort ----------------
+        {
+            size_t mem_before = getWorkingSetKB();
+
+            auto start = chrono::high_resolution_clock::now();
+            for (int t = 0; t < RUNS; t++) {
+                for (int i = 1; i <= n; i++) arr[i] = test_batches[t][i];
+                HeapSort(arr, n);
+            }
+            double t_heap = chrono::duration<double, micro>(chrono::high_resolution_clock::now() - start).count();
+
+            size_t mem_after = getWorkingSetKB();
+
+            res_heap.push_back((long long)(t_heap / RUNS));
+            mem_heap.push_back((long long)((long long)mem_after - (long long)mem_before));
+        }
+
+        // ---------------- Insertion Sort ----------------
+        {
+            size_t mem_before = getWorkingSetKB();
+
+            auto start = chrono::high_resolution_clock::now();
+            for (int t = 0; t < RUNS; t++) {
+                for (int i = 1; i <= n; i++) arr[i] = test_batches[t][i];
+                insertionSort(arr, n);
+            }
+            double t_insertion = chrono::duration<double, micro>(chrono::high_resolution_clock::now() - start).count();
+
+            size_t mem_after = getWorkingSetKB();
+
+            res_insertion.push_back((long long)(t_insertion / RUNS));
+            mem_insertion.push_back((long long)((long long)mem_after - (long long)mem_before));
+        }
+
+        // ---------------- Composite Sort ----------------
+        {
+            size_t mem_before = getWorkingSetKB();
+
+            auto start = chrono::high_resolution_clock::now();
+            for (int t = 0; t < RUNS; t++) {
+                for (int i = 1; i <= n; i++) arr[i] = test_batches[t][i];
+                compositeSort(arr, 1, n);
+            }
+            double t_composite = chrono::duration<double, micro>(chrono::high_resolution_clock::now() - start).count();
+
+            size_t mem_after = getWorkingSetKB();
+
+            res_composite.push_back((long long)(t_composite / RUNS));
+            mem_composite.push_back((long long)((long long)mem_after - (long long)mem_before));
+        }
 
         delete[] arr;
     }
 
     // 直接 5 個 cout 輸出（us）
     cout << "Merge { N=500:" << res_merge[0]
-         << ", N=1000:" << res_merge[1]
-         << ", N=2000:" << res_merge[2]
-         << ", N=3000:" << res_merge[3]
-         << ", N=4000:" << res_merge[4]
-         << ", N=5000:" << res_merge[5] << " }\n";
+        << ", N=1000:" << res_merge[1]
+        << ", N=2000:" << res_merge[2]
+        << ", N=3000:" << res_merge[3]
+        << ", N=4000:" << res_merge[4]
+        << ", N=5000:" << res_merge[5] << " }\n";
 
     cout << "Quick { N=500:" << res_quick[0]
-         << ", N=1000:" << res_quick[1]
-         << ", N=2000:" << res_quick[2]
-         << ", N=3000:" << res_quick[3]
-         << ", N=4000:" << res_quick[4]
-         << ", N=5000:" << res_quick[5] << " }\n";
+        << ", N=1000:" << res_quick[1]
+        << ", N=2000:" << res_quick[2]
+        << ", N=3000:" << res_quick[3]
+        << ", N=4000:" << res_quick[4]
+        << ", N=5000:" << res_quick[5] << " }\n";
 
     cout << "Heap { N=500:" << res_heap[0]
-         << ", N=1000:" << res_heap[1]
-         << ", N=2000:" << res_heap[2]
-         << ", N=3000:" << res_heap[3]
-         << ", N=4000:" << res_heap[4]
-         << ", N=5000:" << res_heap[5] << " }\n";
+        << ", N=1000:" << res_heap[1]
+        << ", N=2000:" << res_heap[2]
+        << ", N=3000:" << res_heap[3]
+        << ", N=4000:" << res_heap[4]
+        << ", N=5000:" << res_heap[5] << " }\n";
 
     cout << "Insertion { N=500:" << res_insertion[0]
-         << ", N=1000:" << res_insertion[1]
-         << ", N=2000:" << res_insertion[2]
-         << ", N=3000:" << res_insertion[3]
-         << ", N=4000:" << res_insertion[4]
-         << ", N=5000:" << res_insertion[5] << " }\n";
+        << ", N=1000:" << res_insertion[1]
+        << ", N=2000:" << res_insertion[2]
+        << ", N=3000:" << res_insertion[3]
+        << ", N=4000:" << res_insertion[4]
+        << ", N=5000:" << res_insertion[5] << " }\n";
 
     cout << "Composite { N=500:" << res_composite[0]
-         << ", N=1000:" << res_composite[1]
-         << ", N=2000:" << res_composite[2]
-         << ", N=3000:" << res_composite[3]
-         << ", N=4000:" << res_composite[4]
-         << ", N=5000:" << res_composite[5] << " }\n";
+        << ", N=1000:" << res_composite[1]
+        << ", N=2000:" << res_composite[2]
+        << ", N=3000:" << res_composite[3]
+        << ", N=4000:" << res_composite[4]
+        << ", N=5000:" << res_composite[5] << " }\n";
+
+
+
+    cout << "\nPeakWorkingSet(KB): " << getPeakWorkingSetKB() << "\n\n";
 
     return 0;
 }
