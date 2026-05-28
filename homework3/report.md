@@ -351,7 +351,7 @@ int main()
 | 負責人 | 實作部分 |報告部分|
 |--------|----------|---------|
 | 陳廷鑫 | Quick Sort、Heap Sort |說明、時間複雜度|
-| 金宗翰 | Insertion Sort、Merge Sort |圖表製作|
+| 金宗翰 | Insertion Sort、Merge Sort |圖表製作、測資案例|
 
 ### 一起做的
 
