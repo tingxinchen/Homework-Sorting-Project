@@ -1,14 +1,14 @@
 #include <iostream>
 #include <vector>
-#include <algorithm> 
+#include <algorithm>
 #include <chrono>
 #include <climits>
 #include <cstdlib>
 
 using namespace std;
 
-//Merge Sort
-void merge(int arr[], int left, int mid, int right)
+// Merge Sort
+static void merge(int arr[], int left, int mid, int right)
 {
     int n1 = mid - left + 1;
     int n2 = right - mid;
@@ -31,7 +31,7 @@ void merge(int arr[], int left, int mid, int right)
     delete[] R;
 }
 
-void iterativeMergeSort(int arr[], int n)
+static void iterativeMergeSort(int arr[], int n)
 {
     for (int size = 1; size < n; size *= 2) {
         for (int left = 1; left <= n - size; left += 2 * size) {
@@ -42,11 +42,11 @@ void iterativeMergeSort(int arr[], int n)
     }
 }
 
-//Quick Sort
-int Median(int* a, int left, int right)
+// Quick Sort
+static int Median(int* a, int left, int right)
 {
     int mid = (left + right) / 2;
-    if (a[mid] < a[left])  swap(a[left], a[mid]);
+    if (a[mid] < a[left]) swap(a[left], a[mid]);
     if (a[right] < a[left]) swap(a[left], a[right]);
     if (a[right] < a[mid]) swap(a[mid], a[right]);
 
@@ -54,11 +54,12 @@ int Median(int* a, int left, int right)
     return a[left];
 }
 
-void QuickSort(int* a, int left, int right)
+static void QuickSort(int* a, int left, int right)
 {
     if (left < right) {
         int pivot = Median(a, left, right);
         int i = left, j = right + 1;
+
         do {
             do i++; while (a[i] < pivot);
             do j--; while (a[j] > pivot);
@@ -71,8 +72,8 @@ void QuickSort(int* a, int left, int right)
     }
 }
 
-//Heap Sort
-void Adjust(int* a, const int root, const int n)
+// Heap Sort
+static void Adjust(int* a, const int root, const int n)
 {
     int j;
     int e = a[root];
@@ -84,7 +85,7 @@ void Adjust(int* a, const int root, const int n)
     a[j / 2] = e;
 }
 
-void HeapSort(int* a, const int n)
+static void HeapSort(int* a, const int n)
 {
     for (int i = n / 2; i >= 1; i--) Adjust(a, i, n);
     for (int i = n - 1; i >= 1; i--) {
@@ -93,8 +94,8 @@ void HeapSort(int* a, const int n)
     }
 }
 
-//Insertion Sort
-void insertionSortRange(int arr[], int left, int right)
+// Insertion Sort
+static void insertionSortRange(int arr[], int left, int right)
 {
     for (int i = left + 1; i <= right; i++) {
         int key = arr[i];
@@ -107,26 +108,27 @@ void insertionSortRange(int arr[], int left, int right)
     }
 }
 
-void insertionSort(int arr[], int n)
+static void insertionSort(int arr[], int n)
 {
     insertionSortRange(arr, 1, n);
 }
 
-//Composite Sort
-void compositeSort(int arr[], int left, int right)
+// Composite Sort
+static void compositeSort(int arr[], int left, int right)
 {
     int threshold = 20;
     if ((right - left + 1) <= threshold) {
         insertionSortRange(arr, left, right);
     }
     else {
+        // this compositeSort chooses HeapSort for bigger input
         HeapSort(arr, right);
     }
 }
 
-//隨機數值
+// 隨機數值
 template <class T>
-void Permute(T* a, int n)
+static void Permute(T* a, int n)
 {
     for (int i = n; i >= 2; i--) {
         int j = rand() % i + 1;
@@ -137,12 +139,14 @@ void Permute(T* a, int n)
 int main()
 {
     srand(42);
+
     vector<int> sizes = { 500, 1000, 2000, 3000, 4000, 5000 };
     const int RUNS = 100;
 
     vector<long long> res_merge, res_quick, res_heap, res_insertion, res_composite;
 
     for (int n : sizes) {
+        // 先產生同一批測資給所有排序法使用（average-case）
         vector<vector<int>> test_batches(RUNS, vector<int>(n + 2));
         for (int t = 0; t < RUNS; t++) {
             for (int k = 1; k <= n; k++) test_batches[t][k] = k;
@@ -150,9 +154,9 @@ int main()
         }
 
         int* arr = new int[n + 2];
-        arr[n + 1] = INT_MAX;
+        arr[n + 1] = INT_MAX; // QuickSort 的哨兵
 
-        //Merge Sort測試
+        // Merge Sort
         auto start = chrono::high_resolution_clock::now();
         for (int t = 0; t < RUNS; t++) {
             for (int i = 1; i <= n; i++) arr[i] = test_batches[t][i];
@@ -161,7 +165,7 @@ int main()
         double t_merge = chrono::duration<double, micro>(chrono::high_resolution_clock::now() - start).count();
         res_merge.push_back((long long)(t_merge / RUNS));
 
-        //Quick Sort測試
+        // Quick Sort
         start = chrono::high_resolution_clock::now();
         for (int t = 0; t < RUNS; t++) {
             for (int i = 1; i <= n; i++) arr[i] = test_batches[t][i];
@@ -170,7 +174,7 @@ int main()
         double t_quick = chrono::duration<double, micro>(chrono::high_resolution_clock::now() - start).count();
         res_quick.push_back((long long)(t_quick / RUNS));
 
-        //Heap Sort測試
+        // Heap Sort
         start = chrono::high_resolution_clock::now();
         for (int t = 0; t < RUNS; t++) {
             for (int i = 1; i <= n; i++) arr[i] = test_batches[t][i];
@@ -179,7 +183,7 @@ int main()
         double t_heap = chrono::duration<double, micro>(chrono::high_resolution_clock::now() - start).count();
         res_heap.push_back((long long)(t_heap / RUNS));
 
-        //Insertion Sort測試
+        // Insertion Sort
         start = chrono::high_resolution_clock::now();
         for (int t = 0; t < RUNS; t++) {
             for (int i = 1; i <= n; i++) arr[i] = test_batches[t][i];
@@ -188,7 +192,7 @@ int main()
         double t_insertion = chrono::duration<double, micro>(chrono::high_resolution_clock::now() - start).count();
         res_insertion.push_back((long long)(t_insertion / RUNS));
 
-        //Composite Sort測試
+        // Composite Sort
         start = chrono::high_resolution_clock::now();
         for (int t = 0; t < RUNS; t++) {
             for (int i = 1; i <= n; i++) arr[i] = test_batches[t][i];
@@ -200,15 +204,41 @@ int main()
         delete[] arr;
     }
 
-    cout << "Merge { N=500:" << res_merge[0] << ", N=1000:" << res_merge[1] << ", N=2000:" << res_merge[2] << ", N=3000:" << res_merge[3] << ", N=4000:" << res_merge[4] << ", N=5000:" << res_merge[5] << " }\n";
+    // 直接 5 個 cout 輸出（us）
+    cout << "Merge { N=500:" << res_merge[0]
+         << ", N=1000:" << res_merge[1]
+         << ", N=2000:" << res_merge[2]
+         << ", N=3000:" << res_merge[3]
+         << ", N=4000:" << res_merge[4]
+         << ", N=5000:" << res_merge[5] << " }\n";
 
-    cout << "Quick { N=500:" << res_quick[0] << ", N=1000:" << res_quick[1] << ", N=2000:" << res_quick[2] << ", N=3000:" << res_quick[3] << ", N=4000:" << res_quick[4] << ", N=5000:" << res_quick[5] << " }\n";
+    cout << "Quick { N=500:" << res_quick[0]
+         << ", N=1000:" << res_quick[1]
+         << ", N=2000:" << res_quick[2]
+         << ", N=3000:" << res_quick[3]
+         << ", N=4000:" << res_quick[4]
+         << ", N=5000:" << res_quick[5] << " }\n";
 
-    cout << "Heap { N=500:" << res_heap[0] << ", N=1000:" << res_heap[1] << ", N=2000:" << res_heap[2] << ", N=3000:" << res_heap[3] << ", N=4000:" << res_heap[4] << ", N=5000:" << res_heap[5] << " }\n";
+    cout << "Heap { N=500:" << res_heap[0]
+         << ", N=1000:" << res_heap[1]
+         << ", N=2000:" << res_heap[2]
+         << ", N=3000:" << res_heap[3]
+         << ", N=4000:" << res_heap[4]
+         << ", N=5000:" << res_heap[5] << " }\n";
 
-    cout << "Insertion { N=500:" << res_insertion[0] << ", N=1000:" << res_insertion[1] << ", N=2000:" << res_insertion[2] << ", N=3000:" << res_insertion[3] << ", N=4000:" << res_insertion[4] << ", N=5000:" << res_insertion[5] << " }\n";
+    cout << "Insertion { N=500:" << res_insertion[0]
+         << ", N=1000:" << res_insertion[1]
+         << ", N=2000:" << res_insertion[2]
+         << ", N=3000:" << res_insertion[3]
+         << ", N=4000:" << res_insertion[4]
+         << ", N=5000:" << res_insertion[5] << " }\n";
 
-    cout << "Composite { N=500:" << res_composite[0] << ", N=1000:" << res_composite[1] << ", N=2000:" << res_composite[2] << ", N=3000:" << res_composite[3] << ", N=4000:" << res_composite[4] << ", N=5000:" << res_composite[5] << " }\n";
+    cout << "Composite { N=500:" << res_composite[0]
+         << ", N=1000:" << res_composite[1]
+         << ", N=2000:" << res_composite[2]
+         << ", N=3000:" << res_composite[3]
+         << ", N=4000:" << res_composite[4]
+         << ", N=5000:" << res_composite[5] << " }\n";
 
     return 0;
 }
