@@ -56,7 +56,7 @@ int main()
         int n = size[i];
         double maxTime = 0;
 
-        // 跑 10 次取最大值（worst-case）
+        // worst-case
         for (int t = 0; t < 10; t++)
         {
             int* h = new int[n + 2];
