@@ -16,36 +16,15 @@
 ## 程式實作
 以下是程式碼：
 ```cpp
-// 目前已完成的檔案（在 homework3/src/function/）：
-// insertion.cpp : Insertion Sort + 簡單測試
-// quick.cpp     : Quick Sort (median-of-three) + Permute 測試
-// merge+worst_case.cpp : Iterative Merge Sort + Merge worst-case 測資產生
-// heap.cpp      : Heap Sort + worst-case(近似) 測試流程
 
-// (1) Insertion Sort 基本作法：
-// 從第二個元素開始，向左找插入位置；比 key 大的元素往右搬。
-
-// (2) Quick Sort (median-of-three)：
-// 先比較 a[left], a[mid], a[right] 三個值，選中位數當 pivot，並放到 a[left]。
-// 分割時使用 i 從左往右找 >= pivot，j 從右往左找 <= pivot，交換直到交錯。
-
-// (3) Iterative Merge Sort：
-// size=1 開始，兩兩合併成 size=2，再合併成 size=4...直到 size >= n。
-// merge() 會用暫存陣列 L/R 把兩段有序資料合併回 arr。
-
-// (4) Heap Sort：
-// 先從 i=n/2 往上做 Adjust 建 max-heap；再把堆頂(最大值)丟到尾端，縮小 heap 繼續調整。
-
-// (5) Permute (random permutation)：
-// 由 i=n 到 2，隨機選 j in [1,i]，swap(a[j], a[i])，讓資料變成隨機排列。
 ```
 ## 效能分析
 
 * **時間複雜度**：
   - Insertion Sort：平均/最差 O(n^2)。資料接近排序好時會比較快。
-  - Quick Sort（median-of-three）：平均 O(n log n)，但最差仍可能 O(n^2)（例如分割很不平均時）。
-  - Merge Sort（iterative）：平均/最差都是 O(n log n)，但需要額外空間做合併。
-  - Heap Sort：平均/最差都是 O(n log n)，屬於 in-place 排序。
+  - Quick Sort（median-of-three）：平均 O(n log n)，但最差仍可能是 O(n^2)
+  - Merge Sort（iterative）：平均/最差都是 O(n log n)，但需要額外空間。
+  - Heap Sort：平均/最差都是 O(n log n)。
 
 ## 測試與驗證
 
