@@ -18,306 +18,326 @@
 以下是程式碼：
 ```cpp
 #include <iostream>
-#include <vector>
 #include <algorithm>
 #include <chrono>
 #include <climits>
 #include <cstdlib>
-#include <Windows.h>
-#include <Psapi.h>
 
 using namespace std;
 
-// Merge Sort
-static void merge(int arr[], int left, int mid, int right)
+// Insertion Sort
+void insertionSort(int data[], int left, int right)
 {
-    int n1 = mid - left + 1;
-    int n2 = right - mid;
+    for (int i = left + 1; i <= right; i++)
+    {
+        int current = data[i];
+        int j = i - 1;
 
-    int* L = new int[n1];
-    int* R = new int[n2];
-
-    for (int i = 0; i < n1; i++) L[i] = arr[left + i];
-    for (int i = 0; i < n2; i++) R[i] = arr[mid + 1 + i];
-
-    int i = 0, j = 0, k = left;
-    while (i < n1 && j < n2) {
-        if (L[i] <= R[j]) arr[k++] = L[i++];
-        else arr[k++] = R[j++];
-    }
-    while (i < n1) arr[k++] = L[i++];
-    while (j < n2) arr[k++] = R[j++];
-
-    delete[] L;
-    delete[] R;
-}
-
-static void iterativeMergeSort(int arr[], int n)
-{
-    for (int size = 1; size < n; size *= 2) {
-        for (int left = 1; left <= n - size; left += 2 * size) {
-            int mid = min(left + size - 1, n);
-            int right = min(left + 2 * size - 1, n);
-            if (mid < right) merge(arr, left, mid, right);
+        while (j >= left && data[j] > current)
+        {
+            data[j + 1] = data[j];
+            j--;
         }
+
+        data[j + 1] = current;
     }
 }
 
 // Quick Sort
-static int Median(int* a, int left, int right)
+int pickPivot(int data[], int left, int right)
 {
     int mid = (left + right) / 2;
-    if (a[mid] < a[left]) swap(a[left], a[mid]);
-    if (a[right] < a[left]) swap(a[left], a[right]);
-    if (a[right] < a[mid]) swap(a[mid], a[right]);
 
-    swap(a[left], a[mid]);
-    return a[left];
+    if (data[mid] < data[left])
+        swap(data[mid], data[left]);
+
+    if (data[right] < data[left])
+        swap(data[right], data[left]);
+
+    if (data[right] < data[mid])
+        swap(data[right], data[mid]);
+
+    swap(data[left], data[mid]);
+
+    return data[left];
 }
 
-static void QuickSort(int* a, int left, int right)
+void quickSort(int data[], int left, int right)
 {
-    if (left < right) {
-        int pivot = Median(a, left, right);
-        int i = left, j = right + 1;
+    if (left >= right)
+        return;
 
-        do {
-            do i++; while (a[i] < pivot);
-            do j--; while (a[j] > pivot);
-            if (i < j) swap(a[i], a[j]);
-        } while (i < j);
+    int pivot = pickPivot(data, left, right);
 
-        swap(a[left], a[j]);
-        QuickSort(a, left, j - 1);
-        QuickSort(a, j + 1, right);
-    }
+    int i = left;
+    int j = right + 1;
+
+    do
+    {
+        do i++;
+        while (data[i] < pivot);
+
+        do j--;
+        while (data[j] > pivot);
+
+        if (i < j)
+            swap(data[i], data[j]);
+
+    } while (i < j);
+
+    swap(data[left], data[j]);
+
+    quickSort(data, left, j - 1);
+    quickSort(data, j + 1, right);
 }
 
 // Heap Sort
-static void Adjust(int* a, const int root, const int n)
+void heapAdjust(int data[], int root, int size)
 {
-    int j;
-    int e = a[root];
-    for (j = 2 * root; j <= n; j *= 2) {
-        if (j < n && a[j] < a[j + 1]) j++;
-        if (e >= a[j]) break;
-        a[j / 2] = a[j];
+    int saved = data[root];
+    int child;
+
+    for (child = 2 * root; child <= size; child *= 2)
+    {
+        if (child < size && data[child] < data[child + 1])
+            child++;
+
+        if (saved >= data[child])
+            break;
+
+        data[child / 2] = data[child];
     }
-    a[j / 2] = e;
+
+    data[child / 2] = saved;
 }
 
-static void HeapSort(int* a, const int n)
+void heapSort(int data[], int size)
 {
-    for (int i = n / 2; i >= 1; i--) Adjust(a, i, n);
-    for (int i = n - 1; i >= 1; i--) {
-        swap(a[1], a[i + 1]);
-        Adjust(a, 1, i);
+    for (int i = size / 2; i >= 1; i--)
+        heapAdjust(data, i, size);
+
+    for (int i = size - 1; i >= 1; i--)
+    {
+        swap(data[1], data[i + 1]);
+        heapAdjust(data, 1, i);
     }
 }
 
-// Insertion Sort
-static void insertionSortRange(int arr[], int left, int right)
+// Merge Sort
+void mergeTwo(int data[], int left, int mid, int right)
 {
-    for (int i = left + 1; i <= right; i++) {
-        int key = arr[i];
-        int j = i - 1;
-        while (j >= left && arr[j] > key) {
-            arr[j + 1] = arr[j];
-            j--;
+    int leftSize = mid - left + 1;
+    int rightSize = right - mid;
+
+    int* leftPart = new int[leftSize];
+    int* rightPart = new int[rightSize];
+
+    for (int i = 0; i < leftSize; i++)
+        leftPart[i] = data[left + i];
+
+    for (int i = 0; i < rightSize; i++)
+        rightPart[i] = data[mid + 1 + i];
+
+    int i = 0;
+    int j = 0;
+    int k = left;
+
+    while (i < leftSize && j < rightSize)
+    {
+        if (leftPart[i] <= rightPart[j])
+            data[k++] = leftPart[i++];
+        else
+            data[k++] = rightPart[j++];
+    }
+
+    while (i < leftSize)
+        data[k++] = leftPart[i++];
+
+    while (j < rightSize)
+        data[k++] = rightPart[j++];
+
+    delete[] leftPart;
+    delete[] rightPart;
+}
+
+void mergeSort(int data[], int size)
+{
+    for (int width = 1; width < size; width *= 2)
+    {
+        for (int left = 1; left <= size - width; left += 2 * width)
+        {
+            int mid = min(left + width - 1, size);
+            int right = min(left + 2 * width - 1, size);
+
+            if (mid < right)
+                mergeTwo(data, left, mid, right);
         }
-        arr[j + 1] = key;
     }
-}
-
-static void insertionSort(int arr[], int n)
-{
-    insertionSortRange(arr, 1, n);
 }
 
 // Composite Sort
-static void compositeSort(int arr[], int left, int right)
+void compositeSort(int data[], int left, int right)
 {
     int threshold = 20;
-    if ((right - left + 1) <= threshold) {
-        insertionSortRange(arr, left, right);
-    }
-    else {
-        // this compositeSort chooses HeapSort for bigger input
-        HeapSort(arr, right);
-    }
+
+    if (right - left + 1 <= threshold)
+        insertionSort(data, left, right);
+    else
+        heapSort(data, right);
 }
 
-// 隨機數值
-template <class T>
-static void Permute(T* a, int n)
+// Shuffle
+void randomShuffle(int data[], int size)
 {
-    for (int i = n; i >= 2; i--) {
+    for (int i = size; i >= 2; i--)
+    {
         int j = rand() % i + 1;
-        swap(a[j], a[i]);
+        swap(data[i], data[j]);
     }
 }
 
+// 印結果
+void printResult(string name, long long times[], int testSizes[])
+{
+    cout << name << " (us): ";
 
+    for (int i = 0; i < 6; i++)
+    {
+        cout << "N=" << testSizes[i]
+            << ":" << times[i];
 
-//記憶體
-static size_t getWorkingSetKB() {
-    PROCESS_MEMORY_COUNTERS memInfo;
-    GetProcessMemoryInfo(GetCurrentProcess(), &memInfo, sizeof(memInfo));
-    return (size_t)(memInfo.WorkingSetSize / 1024);
+        if (i != 5)
+            cout << ", ";
+    }
+
+    cout << endl;
 }
 
-static size_t getPeakWorkingSetKB() {
-    PROCESS_MEMORY_COUNTERS memInfo;
-    GetProcessMemoryInfo(GetCurrentProcess(), &memInfo, sizeof(memInfo));
-    return (size_t)(memInfo.PeakWorkingSetSize / 1024);
-}
 int main()
 {
     srand(42);
 
-    vector<int> sizes = { 500, 1000, 2000, 3000, 4000, 5000 };
     const int RUNS = 100;
-    vector<long long> mem_merge, mem_quick, mem_heap, mem_insertion, mem_composite; //記憶體
-    vector<long long> res_merge, res_quick, res_heap, res_insertion, res_composite;
+    int testSizes[6] = { 500, 1000, 2000, 3000, 4000, 5000 };
 
-    for (int n : sizes) {
-        // 先產生同一批測資給所有排序法使用（average-case）
-        vector<vector<int>> test_batches(RUNS, vector<int>(n + 2));
-        for (int t = 0; t < RUNS; t++) {
-            for (int k = 1; k <= n; k++) test_batches[t][k] = k;
-            Permute(test_batches[t].data(), n);
-        }
+    long long timesMerge[6];
+    long long timesQuick[6];
+    long long timesHeap[6];
+    long long timesInsertion[6];
+    long long timesComposite[6];
 
-        int* arr = new int[n + 2];
-        arr[n + 1] = INT_MAX; // QuickSort 的哨兵
+    for (int s = 0; s < 6; s++)
+    {
+        int n = testSizes[s];
 
-        // ---------------- Merge Sort ----------------
+        int** batches = new int* [RUNS];
+
+        for (int i = 0; i < RUNS; i++)
+            batches[i] = new int[n + 2];
+
+        for (int t = 0; t < RUNS; t++)
         {
-            size_t mem_before = getWorkingSetKB();
+            for (int i = 1; i <= n; i++)
+                batches[t][i] = i;
 
-            auto start = chrono::high_resolution_clock::now();
-            for (int t = 0; t < RUNS; t++) {
-                for (int i = 1; i <= n; i++) arr[i] = test_batches[t][i];
-                iterativeMergeSort(arr, n);
-            }
-            double t_merge = chrono::duration<double, micro>(chrono::high_resolution_clock::now() - start).count();
-
-            size_t mem_after = getWorkingSetKB();
-
-            res_merge.push_back((long long)(t_merge / RUNS));
-            mem_merge.push_back((long long)((long long)mem_after - (long long)mem_before));
+            randomShuffle(batches[t], n);
         }
 
-        // ---------------- Quick Sort ----------------
+        int* data = new int[n + 2];
+        data[n + 1] = INT_MAX;
+
+        chrono::high_resolution_clock::time_point start;
+        chrono::high_resolution_clock::time_point end;
+        double total;
+
+        // Merge
+        start = chrono::high_resolution_clock::now();
+
+        for (int t = 0; t < RUNS; t++)
         {
-            size_t mem_before = getWorkingSetKB();
+            for (int i = 1; i <= n; i++)
+                data[i] = batches[t][i];
 
-            auto start = chrono::high_resolution_clock::now();
-            for (int t = 0; t < RUNS; t++) {
-                for (int i = 1; i <= n; i++) arr[i] = test_batches[t][i];
-                QuickSort(arr, 1, n);
-            }
-            double t_quick = chrono::duration<double, micro>(chrono::high_resolution_clock::now() - start).count();
-
-            size_t mem_after = getWorkingSetKB();
-
-            res_quick.push_back((long long)(t_quick / RUNS));
-            mem_quick.push_back((long long)((long long)mem_after - (long long)mem_before));
+            mergeSort(data, n);
         }
 
-        // ---------------- Heap Sort ----------------
+        end = chrono::high_resolution_clock::now();
+        total = chrono::duration<double, micro>(end - start).count();
+        timesMerge[s] = total / RUNS;
+
+        // Quick
+        start = chrono::high_resolution_clock::now();
+
+        for (int t = 0; t < RUNS; t++)
         {
-            size_t mem_before = getWorkingSetKB();
+            for (int i = 1; i <= n; i++)
+                data[i] = batches[t][i];
 
-            auto start = chrono::high_resolution_clock::now();
-            for (int t = 0; t < RUNS; t++) {
-                for (int i = 1; i <= n; i++) arr[i] = test_batches[t][i];
-                HeapSort(arr, n);
-            }
-            double t_heap = chrono::duration<double, micro>(chrono::high_resolution_clock::now() - start).count();
-
-            size_t mem_after = getWorkingSetKB();
-
-            res_heap.push_back((long long)(t_heap / RUNS));
-            mem_heap.push_back((long long)((long long)mem_after - (long long)mem_before));
+            quickSort(data, 1, n);
         }
 
-        // ---------------- Insertion Sort ----------------
+        end = chrono::high_resolution_clock::now();
+        total = chrono::duration<double, micro>(end - start).count();
+        timesQuick[s] = total / RUNS;
+
+        // Heap
+        start = chrono::high_resolution_clock::now();
+
+        for (int t = 0; t < RUNS; t++)
         {
-            size_t mem_before = getWorkingSetKB();
+            for (int i = 1; i <= n; i++)
+                data[i] = batches[t][i];
 
-            auto start = chrono::high_resolution_clock::now();
-            for (int t = 0; t < RUNS; t++) {
-                for (int i = 1; i <= n; i++) arr[i] = test_batches[t][i];
-                insertionSort(arr, n);
-            }
-            double t_insertion = chrono::duration<double, micro>(chrono::high_resolution_clock::now() - start).count();
-
-            size_t mem_after = getWorkingSetKB();
-
-            res_insertion.push_back((long long)(t_insertion / RUNS));
-            mem_insertion.push_back((long long)((long long)mem_after - (long long)mem_before));
+            heapSort(data, n);
         }
 
-        // ---------------- Composite Sort ----------------
+        end = chrono::high_resolution_clock::now();
+        total = chrono::duration<double, micro>(end - start).count();
+        timesHeap[s] = total / RUNS;
+
+        // Insertion
+        start = chrono::high_resolution_clock::now();
+
+        for (int t = 0; t < RUNS; t++)
         {
-            size_t mem_before = getWorkingSetKB();
+            for (int i = 1; i <= n; i++)
+                data[i] = batches[t][i];
 
-            auto start = chrono::high_resolution_clock::now();
-            for (int t = 0; t < RUNS; t++) {
-                for (int i = 1; i <= n; i++) arr[i] = test_batches[t][i];
-                compositeSort(arr, 1, n);
-            }
-            double t_composite = chrono::duration<double, micro>(chrono::high_resolution_clock::now() - start).count();
-
-            size_t mem_after = getWorkingSetKB();
-
-            res_composite.push_back((long long)(t_composite / RUNS));
-            mem_composite.push_back((long long)((long long)mem_after - (long long)mem_before));
+            insertionSort(data, 1, n);
         }
 
-        delete[] arr;
+        end = chrono::high_resolution_clock::now();
+        total = chrono::duration<double, micro>(end - start).count();
+        timesInsertion[s] = total / RUNS;
+
+        // Composite
+        start = chrono::high_resolution_clock::now();
+
+        for (int t = 0; t < RUNS; t++)
+        {
+            for (int i = 1; i <= n; i++)
+                data[i] = batches[t][i];
+
+            compositeSort(data, 1, n);
+        }
+
+        end = chrono::high_resolution_clock::now();
+        total = chrono::duration<double, micro>(end - start).count();
+        timesComposite[s] = total / RUNS;
+
+        delete[] data;
+
+        for (int i = 0; i < RUNS; i++)
+            delete[] batches[i];
+
+        delete[] batches;
     }
 
-    // 直接 5 個 cout 輸出（us）
-    cout << "Merge { N=500:" << res_merge[0]
-        << ", N=1000:" << res_merge[1]
-        << ", N=2000:" << res_merge[2]
-        << ", N=3000:" << res_merge[3]
-        << ", N=4000:" << res_merge[4]
-        << ", N=5000:" << res_merge[5] << " }\n";
-
-    cout << "Quick { N=500:" << res_quick[0]
-        << ", N=1000:" << res_quick[1]
-        << ", N=2000:" << res_quick[2]
-        << ", N=3000:" << res_quick[3]
-        << ", N=4000:" << res_quick[4]
-        << ", N=5000:" << res_quick[5] << " }\n";
-
-    cout << "Heap { N=500:" << res_heap[0]
-        << ", N=1000:" << res_heap[1]
-        << ", N=2000:" << res_heap[2]
-        << ", N=3000:" << res_heap[3]
-        << ", N=4000:" << res_heap[4]
-        << ", N=5000:" << res_heap[5] << " }\n";
-
-    cout << "Insertion { N=500:" << res_insertion[0]
-        << ", N=1000:" << res_insertion[1]
-        << ", N=2000:" << res_insertion[2]
-        << ", N=3000:" << res_insertion[3]
-        << ", N=4000:" << res_insertion[4]
-        << ", N=5000:" << res_insertion[5] << " }\n";
-
-    cout << "Composite { N=500:" << res_composite[0]
-        << ", N=1000:" << res_composite[1]
-        << ", N=2000:" << res_composite[2]
-        << ", N=3000:" << res_composite[3]
-        << ", N=4000:" << res_composite[4]
-        << ", N=5000:" << res_composite[5] << " }\n";
-
-
-
-    cout << "\nPeakWorkingSet(KB): " << getPeakWorkingSetKB() << "\n\n";
+    printResult("Merge", timesMerge, testSizes);
+    printResult("Quick", timesQuick, testSizes);
+    printResult("Heap", timesHeap, testSizes);
+    printResult("Insertion", timesInsertion, testSizes);
+    printResult("Composite", timesComposite, testSizes);
 
     return 0;
 }
