@@ -117,7 +117,7 @@ static void insertionSort(int arr[], int n)
 }
 
 //Composite Sort
-// 使用 Quick Sort 分割，當區間小於 threshold 時改用 Insertion Sort
+
 static void compositeSortInternal(int arr[], int left, int right, int threshold)
 {
     if ((right - left + 1) <= threshold) {
@@ -145,7 +145,7 @@ static void compositeSort(int arr[], int left, int right)
     compositeSortInternal(arr, left, right, 20); // 門檻值設為 20
 }
 
-// ==================== 記憶體計量功能 ====================
+//記憶體計量功能
 static size_t getWorkingSetKB() {
     PROCESS_MEMORY_COUNTERS memInfo;
     GetProcessMemoryInfo(GetCurrentProcess(), &memInfo, sizeof(memInfo));
@@ -158,10 +158,9 @@ static size_t getPeakWorkingSetKB() {
     return (size_t)(memInfo.PeakWorkingSetSize / 1024);
 }
 
-// ==================== 主程式 ====================
+//主程式
 int main()
 {
-    // 改用時間戳記種子，確保平均狀況的隨機性
     unsigned seed_val = chrono::system_clock::now().time_since_epoch().count();
     mt19937 g(seed_val);
 
@@ -172,7 +171,6 @@ int main()
     vector<long long> mem_merge, mem_quick, mem_heap, mem_insertion, mem_composite;
 
     for (int n : sizes) {
-        // 每次 N 值不同時，產生 100 組全新的隨機排列
         vector<vector<int>> test_batches(RUNS, vector<int>(n + 2));
         for (int t = 0; t < RUNS; t++) {
             vector<int> temp(n);
@@ -184,7 +182,7 @@ int main()
         int* arr = new int[n + 2];
         arr[n + 1] = INT_MAX;
 
-        // ---------------- Merge Sort ----------------
+        //Merge Sort
         size_t m_before = getWorkingSetKB();
         auto start = chrono::high_resolution_clock::now();
         for (int t = 0; t < RUNS; t++) {
@@ -195,7 +193,7 @@ int main()
         res_merge.push_back(chrono::duration_cast<chrono::microseconds>(end - start).count() / RUNS);
         mem_merge.push_back((long long)getWorkingSetKB() - (long long)m_before);
 
-        // ---------------- Quick Sort ----------------
+        //Quick Sort
         m_before = getWorkingSetKB();
         start = chrono::high_resolution_clock::now();
         for (int t = 0; t < RUNS; t++) {
@@ -206,7 +204,7 @@ int main()
         res_quick.push_back(chrono::duration_cast<chrono::microseconds>(end - start).count() / RUNS);
         mem_quick.push_back((long long)getWorkingSetKB() - (long long)m_before);
 
-        // ---------------- Heap Sort ----------------
+        //Heap Sort
         m_before = getWorkingSetKB();
         start = chrono::high_resolution_clock::now();
         for (int t = 0; t < RUNS; t++) {
@@ -217,7 +215,7 @@ int main()
         res_heap.push_back(chrono::duration_cast<chrono::microseconds>(end - start).count() / RUNS);
         mem_heap.push_back((long long)getWorkingSetKB() - (long long)m_before);
 
-        // ---------------- Insertion Sort ----------------
+        //Insertion Sort
         m_before = getWorkingSetKB();
         start = chrono::high_resolution_clock::now();
         for (int t = 0; t < RUNS; t++) {
@@ -228,7 +226,7 @@ int main()
         res_insertion.push_back(chrono::duration_cast<chrono::microseconds>(end - start).count() / RUNS);
         mem_insertion.push_back((long long)getWorkingSetKB() - (long long)m_before);
 
-        // ---------------- Composite Sort ----------------
+        //Composite Sort
         m_before = getWorkingSetKB();
         start = chrono::high_resolution_clock::now();
         for (int t = 0; t < RUNS; t++) {
